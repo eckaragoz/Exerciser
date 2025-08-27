@@ -1,5 +1,6 @@
 # 1. Build aşaması
-FROM maven:3.9.6-eclipse-temurin-21 AS build
+FROM ghcr.io/adoptium/temurin:21-jdk-focal AS build
+#FROM maven:3.9.6-eclipse-temurin-21 AS build
 WORKDIR /app
 
 # Sadece pom.xml'i kopyala ve bağımlılıkları indir
@@ -14,7 +15,8 @@ RUN mvn clean install -DskipTests
 RUN echo "Target dizini içeriği:" && ls -l /app/target
 
 # 2. Run aşaması
-FROM eclipse-temurin:21-jdk
+#FROM eclipse-temurin:21-jdk
+FROM temurin:21-jdk-focal
 WORKDIR /app
 
 # Build aşamasından jar'ı al
