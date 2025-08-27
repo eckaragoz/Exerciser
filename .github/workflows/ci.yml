@@ -1,0 +1,21 @@
+jobs:
+  build-and-deploy:
+    runs-on: self-hosted   # Burada self-hosted belirtiyoruz
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Login to GHCR
+        run: echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u eckaragoz --password-stdin
+
+      - name: Build Docker image
+        run: docker build -t ghcr.io/eckaragoz/exerciser:latest .
+
+      - name: Push Docker image
+        run: docker push ghcr.io/eckaragoz/exerciser:latest
+
+      - name: Deploy to Minikube
+        run: |
+          helm upgrade --install exerciser ./helm/exerciser \
+            --namespace default \
+            --set image.repository=ghcr.io/eckaragoz/exerciser \
+            --set image.tag=latest
