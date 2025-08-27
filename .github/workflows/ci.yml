@@ -31,7 +31,7 @@ jobs:
       - name: Deploy to Minikube
         run: |
           # Eğer minikube çalışıyorsa ve kubectl config hazırsa:
-          helm upgrade --install exerciser ./helm/exerciser \
+          helm upgrade --install exerciser ./charts/exerciser \
             --namespace default \
             --set image.repository=ghcr.io/eckaragoz/exerciser \
             --set image.tag=latest
