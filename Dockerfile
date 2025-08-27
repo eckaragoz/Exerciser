@@ -4,22 +4,21 @@ WORKDIR /app
 
 # Sadece pom.xml'i kopyala ve bağımlılıkları indir
 COPY pom.xml .
-RUN mvn dependency:go-offline
+RUN mvn dependency:go-offline -B
 
-# Kaynak kodu kopyala ve package veya install çalıştır
+# Kaynak kodu kopyala
 COPY src ./src
+
+# Package veya install çalıştır
 RUN mvn clean install -DskipTests
 
-# Oluşan jar'ı kontrol et
+# Build sonuçlarını kontrol et
 RUN echo "Target dizini içeriği:" && ls -l /app/target
 
 # 2. Run aşaması
 FROM eclipse-temurin:21-jdk
 WORKDIR /app
-
-# Build aşamasından jar'ı al
 COPY --from=build /app/target/*.jar app.jar
 
 EXPOSE 8080
-
 ENTRYPOINT ["java", "-jar", "app.jar"]
