@@ -1,5 +1,6 @@
 # 1. Build aşaması
-FROM maven:3.9.6-eclipse-temurin-21 AS build
+FROM ghcr.io/adoptium/temurin:21-jdk AS build
+#FROM maven:3.9.6-eclipse-temurin-21 AS build
 WORKDIR /app
 
 # Sadece pom.xml'i kopyala ve bağımlılıkları indir
