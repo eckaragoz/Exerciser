@@ -1,6 +1,5 @@
 name: CI/CD Pipeline
 
-# Workflow tetiklenme koşulları
 on:
   push:
     branches:
@@ -9,29 +8,31 @@ on:
 
 jobs:
   build-and-deploy:
-    runs-on: self-hosted   # Kendi lokal runner'ını kullan
+    runs-on: self-hosted
     steps:
-      # Repo’yu checkout et
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # GHCR login (PAT ile)
+      - name: Set variables
+        run: |
+          echo "IMAGE_TAG=${GITHUB_SHA}" >> $GITHUB_ENV
+          echo "IMAGE_NAME=ghcr.io/eckaragoz/exerciser" >> $GITHUB_ENV
+
       - name: Login to GitHub Container Registry
         run: echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u eckaragoz --password-stdin
 
-      # Docker image build
       - name: Build Docker image
-        run: docker build -t ghcr.io/eckaragoz/exerciser:latest .
+        run: docker build -t $IMAGE_NAME:$IMAGE_TAG .
 
-      # Docker image push
       - name: Push Docker image
-        run: docker push ghcr.io/eckaragoz/exerciser:latest
+        run: |
+          docker push $IMAGE_NAME:$IMAGE_TAG
+          docker tag $IMAGE_NAME:$IMAGE_TAG $IMAGE_NAME:latest
+          docker push $IMAGE_NAME:latest
 
-      # Helm ile Minikube deploy
       - name: Deploy to Minikube
         run: |
-          # Eğer minikube çalışıyorsa ve kubectl config hazırsa:
           helm upgrade --install exerciser ./charts/exerciser \
             --namespace default \
-            --set image.repository=ghcr.io/eckaragoz/exerciser \
-            --set image.tag=latest
+            --set image.repository=$IMAGE_NAME \
+            --set image.tag=$IMAGE_TAG
