@@ -1,0 +1,8 @@
+Forwarding from 127.0.0.1:8080 -> 8080
+Forwarding from [::1]:8080 -> 8080
+Handling connection for 8080
+Handling connection for 8080
+Handling connection for 8080
+E0821 13:16:05.766934    1816 portforward.go:424] "Unhandled Error" err="an error occurred forwarding 8080 -> 8080: error forwarding port 8080 to pod ff98ee6121ceba65f2f673ee43b50c21854f29bde03c84613fef25513f36f20e, uid : Error response from daemon: No such container: ff98ee6121ceba65f2f673ee43b50c21854f29bde03c84613fef25513f36f20e"
+E0821 13:16:05.766796    1816 portforward.go:404] "Unhandled Error" err="error copying from local connection to remote stream: writeto tcp6 [::1]:8080->[::1]:52182: read tcp6 [::1]:8080->[::1]:52182: read: connection reset by peer"
+error: lost connection to pod

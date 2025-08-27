@@ -1,0 +1,74 @@
+# Image
+image:
+  repository: exerciser
+  tag: "1.0"
+  pullPolicy: IfNotPresent
+
+# Replica
+replicaCount: 1
+
+# App ports
+service:
+  type: ClusterIP
+  port: 80
+
+# Probes (Actuator varsayımı)
+probes:
+  enabled: true
+  livenessPath: /actuator/health/liveness
+  readinessPath: /actuator/health/readiness
+  startupPath: /actuator/health
+
+resources:
+  limits:
+    cpu: "500m"
+    memory: "512Mi"
+  requests:
+    cpu: "100m"
+    memory: "256Mi"
+
+env:
+  - name: JAVA_TOOL_OPTIONS
+    value: "-XX:+UseZGC -Xms128m -Xmx512m"
+
+config:
+  enabled: false
+  mountPath: /config
+  files:
+    application.yaml: |
+      server:
+        port: 8080
+
+# Ingress yapılandırması
+ingress:
+  enabled: true
+  host: exerciser.local
+  annotations: {}
+  paths:
+    - path: /
+      pathType: Prefix
+      backend:
+        service:
+          name: exerciser-service
+          port:
+            number: 80
+  # Minikube ortamında ingress controller LoadBalancer üzerinden çalışacak
+  controller:
+    service:
+      type: LoadBalancer
+
+secrets:
+  enabled: false
+  data: {}
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 75
+
+podAnnotations: {}
+podLabels: {}
+nodeSelector: {}
+tolerations: []
+affinity: {}

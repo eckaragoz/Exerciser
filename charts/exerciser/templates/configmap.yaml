@@ -1,0 +1,11 @@
+{{- if .Values.config.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "exerciser.fullname" . }}-config
+data:
+  {{- range $k, $v := .Values.config.files }}
+  {{ $k }}: |
+  {{ $v | indent 4 }}
+  {{- end }}
+  {{- end }}
